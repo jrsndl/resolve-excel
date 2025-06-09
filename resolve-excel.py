@@ -7,6 +7,7 @@ import os
 import re
 import sys
 
+
 def make_excel(images, edit_index, root):
     w = 160
     h = 90
@@ -36,11 +37,10 @@ def make_excel(images, edit_index, root):
         ws[f"B{row}"].font = Font(bold=True, size=16)
         ws[f"B{row}"].alignment = Alignment(horizontal="center", vertical="center")
 
-
-
         cnt += 1
 
     wb.save(f'{root}\out.xlsx')
+
 
 def sort_images(image_list):
     """
@@ -63,6 +63,7 @@ def sort_images(image_list):
     for key, val in img_dict.items():
         images.append(val)
     return images
+
 
 def get_file_list(root, logger, include="", exclude="", pattern=None, recursive=False):
     if not os.path.isdir(root):
@@ -92,9 +93,10 @@ def get_file_list(root, logger, include="", exclude="", pattern=None, recursive=
         logger.warning("No files found at {}".format(root))
     return file_list
 
+
 def get_args():
     parser = argparse.ArgumentParser(
-        description="Takes images and Edit Index from Davinci Resolve, and converts to csv with thumbnails path.")
+        description="Takes gallery images and Edit Index from Davinci Resolve, and converts to Excel with thumbnails")
     parser.add_argument(
         '-i',
         help="Root folder for images and csv",
@@ -102,6 +104,7 @@ def get_args():
         required=False
     )
     return parser.parse_args()
+
 
 def get_app_path():
     application_path = None
@@ -116,8 +119,6 @@ def get_app_path():
     return application_path
 
 
-
-
 if __name__ == "__main__":
     # log
     logger = logging.getLogger(__name__)
@@ -126,7 +127,7 @@ if __name__ == "__main__":
     formatter = logging.Formatter('%(levelname)s:%(message)s')
     app_path = get_app_path()
     if app_path is not None:
-        app_path += '/thumb-spreadsheet.log'
+        app_path += '/resolve-excel.log'
         file_handler = logging.FileHandler(app_path)
         logger.addHandler(file_handler)
     stream_handler = logging.StreamHandler()
@@ -162,7 +163,7 @@ if __name__ == "__main__":
     logger.info(f"Found {len(images)} images.")
 
     edit_index = ""
-    edit_indexes = get_file_list(search_root, logger, pattern=".*\.(csv)$")
+    edit_indexes = get_file_list(search_root, logger, pattern=r".*\.(csv)$")
     if edit_indexes is None or len(edit_indexes) == 0:
         logger.warning("No edit indexes found.")
         edit_index = ""
@@ -171,10 +172,4 @@ if __name__ == "__main__":
     edit_index = edit_indexes[0]
 
     make_excel(images, edit_index, search_root)
-
-
-
-
-
-
 
